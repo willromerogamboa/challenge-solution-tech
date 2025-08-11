@@ -16,6 +16,12 @@ class ChatService {
     this.httpClient = httpClient;
   }
 
+  async search(query: string): Promise<Chat[]> {
+    return this.httpClient
+      .get<ListResponse>(`/chats?search=${query}`)
+      .then((res) => res.chats);
+  }
+
   async list(): Promise<Chat[]> {
     return this.httpClient.get<ListResponse>("/chats").then((res) => res.chats);
   }

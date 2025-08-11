@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { Edit, MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal, SearchIcon } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -26,19 +28,23 @@ import {
 } from "@/components/ui/sidebar";
 import { useChatHistory, useDeleteChat } from "@/hooks/use-chat";
 
+import SearchChats from "./search-chats";
+
 const items = [
   {
-    title: "Nuevo chat",
+    title: "New Chat",
     url: "/chat",
     icon: Edit,
   },
 ];
 
 export function AppSidebar() {
+  const router = useRouter();
+
+  const [isOpenSearch, setIsOpenSearch] = useState(false);
+
   const { data: chats } = useChatHistory();
   const { mutateAsync: deleteChat } = useDeleteChat();
-
-  const router = useRouter();
 
   const handleDeleteChat = async (chatId: string) => {
     await deleteChat(chatId);
@@ -67,6 +73,18 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <span
+                    className="cursor-pointer"
+                    onClick={() => setIsOpenSearch(true)}
+                  >
+                    <SearchIcon />
+                    <span>Search Chats</span>
+                  </span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -108,6 +126,8 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter />
+
+      <SearchChats open={!!isOpenSearch} onOpenChange={setIsOpenSearch} />
     </Sidebar>
   );
 }

@@ -72,3 +72,11 @@ export function useDeleteChat() {
     },
   });
 }
+
+export function useSearchChats(query: string) {
+  return useQuery<Chat[]>({
+    queryKey: qk.search(query),
+    queryFn: () => chatService.search(query),
+    enabled: !!query,
+  });
+}

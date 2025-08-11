@@ -11,7 +11,22 @@ import {
 let db: Chat[] = initialChatSeed();
 
 export const handlers = [
-  http.get("/api/chats", () => HttpResponse.json({ chats: db })),
+  http.get("/api/chats", ({ request }) => {
+    const searchParams = new URLSearchParams(request.url.split("?")[1]);
+    const search = searchParams.get("search");
+
+    const filteredChats = search
+      ? db.filter(
+          (chat) =>
+            chat.title.toLowerCase().includes(search.toLowerCase()) ||
+            chat.messages.some((message) =>
+              message.content.toLowerCase().includes(search.toLowerCase())
+            )
+        )
+      : db;
+
+    return HttpResponse.json({ chats: filteredChats });
+  }),
 
   http.get("/api/chats/:id", ({ params }) => {
     const chat = db.find((c) => c.id === params.id);
