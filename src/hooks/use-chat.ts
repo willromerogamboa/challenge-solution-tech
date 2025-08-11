@@ -39,8 +39,9 @@ export function useSendMessage() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { chatId: string; content: string }) =>
-      chatService.sendMessage(data.chatId, data.content),
+    mutationFn: (data: { chatId: string; content: string; files?: File[] }) => {
+      return chatService.sendMessage(data.chatId, data.content, data.files);
+    },
     onSuccess: (chat) => {
       qc.setQueryData(qk.chat(chat.id), chat);
 

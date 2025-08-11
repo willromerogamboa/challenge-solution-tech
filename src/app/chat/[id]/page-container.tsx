@@ -16,8 +16,8 @@ export default function ChatPageContainer({ chatId }: ChatPageContainerProps) {
     return <div>Loading...</div>;
   }
 
-  const handleSendMessage = (message: string) => {
-    sendMessage({ chatId, content: message });
+  const handleSendMessage = (message: string, files?: File[]) => {
+    sendMessage({ chatId, content: message, files });
   };
 
   return (

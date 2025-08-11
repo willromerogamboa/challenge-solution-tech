@@ -13,7 +13,7 @@ export class HttpClient {
     return this.request<T>(path, {
       ...options,
       method: "POST",
-      body: JSON.stringify(body),
+      body: body instanceof FormData ? body : JSON.stringify(body),
     });
   }
 

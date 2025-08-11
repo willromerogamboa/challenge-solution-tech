@@ -32,9 +32,22 @@ class ChatService {
       .then((res) => res.chat);
   }
 
-  async sendMessage(chatId: string, content: string): Promise<Chat> {
+  async sendMessage(
+    chatId: string,
+    content: string,
+    files?: File[]
+  ): Promise<Chat> {
+    const formData = new FormData();
+
+    formData.append("content", content);
+    files?.forEach((file) => formData.append("files", file));
+
+    const headers: Record<string, string> = {
+      "Content-Type": "multipart/form-data",
+    };
+
     return this.httpClient
-      .post<SendResponse>(`/chats/${chatId}/messages`, { content })
+      .post<SendResponse>(`/chats/${chatId}/messages`, formData, { headers })
       .then((res) => res.chat);
   }
 
