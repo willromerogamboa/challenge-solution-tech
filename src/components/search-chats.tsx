@@ -25,7 +25,7 @@ export default function SearchChats({ open, onOpenChange }: SearchChatsProps) {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
-  const { data: chats } = useSearchChats(search);
+  const { data: chats, isLoading } = useSearchChats(search);
 
   const handleGoToChat = (id: string) => {
     router.push(`/chat/${id}`);
@@ -34,13 +34,18 @@ export default function SearchChats({ open, onOpenChange }: SearchChatsProps) {
   };
 
   return (
-    <CommandDialog open={open} showCloseButton onOpenChange={onOpenChange}>
+    <CommandDialog
+      open={open}
+      showCloseButton
+      onOpenChange={onOpenChange}
+      className="min-h-80"
+    >
       <Command shouldFilter={false}>
         <CommandInput placeholder="Search chats..." onValueChange={setSearch} />
 
         <CommandList>
           <CommandGroup>
-            {chats?.length === 0 && (
+            {!isLoading && chats?.length === 0 && (
               <CommandEmpty>No results found.</CommandEmpty>
             )}
 
