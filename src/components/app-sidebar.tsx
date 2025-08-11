@@ -17,7 +17,7 @@ import {
 const items = [
   {
     title: "Nuevo chat",
-    url: "#",
+    url: "/new",
     icon: Edit,
   },
 ];
@@ -26,7 +26,9 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <h2>Solution Tech</h2>
+        <Link href="/">
+          <h2>Solution Tech</h2>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>

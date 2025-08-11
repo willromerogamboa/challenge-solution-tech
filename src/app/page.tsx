@@ -1,8 +1,11 @@
-export default function Home() {
-  return (
-    <div className="p-8">
-      <h1>Welcome to Solution Tech</h1>
-      <p>Your one-stop platform for innovative tech solutions.</p>
-    </div>
-  );
+"use client";
+
+import dynamic from "next/dynamic";
+
+const AppContainer = dynamic(() => import("./app-container"), {
+  ssr: false,
+});
+
+export default function AppPage() {
+  return <AppContainer />;
 }
