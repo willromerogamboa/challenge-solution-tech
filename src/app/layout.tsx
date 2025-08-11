@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { HydrateClient, prefetchChatList } from "@/lib/react-query";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,23 +21,27 @@ export const metadata: Metadata = {
   description: "A platform for innovative tech solutions",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const dehydratedState = await prefetchChatList();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex-1 flex flex-col">
-            <SidebarTrigger />
-            {children}
-          </main>
-        </SidebarProvider>
+        <HydrateClient state={dehydratedState}>
+          <SidebarProvider>
+            <AppSidebar />
+            <main className="flex-1 flex flex-col">
+              <SidebarTrigger />
+              {children}
+            </main>
+          </SidebarProvider>
+        </HydrateClient>
       </body>
     </html>
   );

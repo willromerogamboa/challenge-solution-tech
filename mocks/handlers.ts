@@ -1,21 +1,20 @@
 import { http, HttpResponse } from "msw";
 import { nanoid } from "nanoid";
 
-import { Chats } from "./dexie";
 import type { Chat, Message } from "./models";
-import { ensureSeed, generateAssistantReply } from "./seed";
+import {
+  generateAssistantReply,
+  initialChatSeed,
+  initialMessageSeed,
+} from "./seed";
+
+let db: Chat[] = initialChatSeed();
 
 export const handlers = [
-  http.get("/api/chats", async () => {
-    await ensureSeed();
-    const chats = await Chats.getAll();
-    return HttpResponse.json({ chats });
-  }),
+  http.get("/api/chats", () => HttpResponse.json({ chats: db })),
 
-  http.get("/api/chats/:id", async ({ params }) => {
-    await ensureSeed();
-
-    const chat = await Chats.get(String(params.id));
+  http.get("/api/chats/:id", ({ params }) => {
+    const chat = db.find((c) => c.id === params.id);
 
     if (!chat) {
       return HttpResponse.json({ message: "Not found" }, { status: 404 });
@@ -25,22 +24,19 @@ export const handlers = [
   }),
 
   http.post("/api/chats", async ({ request }) => {
-    await ensureSeed();
+    const body = (await request.json()) as {
+      title: string;
+      firstMessage?: string;
+    };
 
-    const body = (await request.json()) as { firstMessage?: string };
     const id = nanoid();
     const now = new Date().toISOString();
 
     const messages: Message[] = [];
 
-    if (body.firstMessage?.trim()) {
-      messages.push({
-        id: nanoid(),
-        role: "user",
-        content: body.firstMessage,
-        createdAt: now,
-      });
+    messages.push(initialMessageSeed());
 
+    if (body.firstMessage?.trim()) {
       messages.push({
         id: nanoid(),
         role: "assistant",
@@ -51,27 +47,24 @@ export const handlers = [
 
     const chat: Chat = {
       id,
-      title: body.firstMessage ? body.firstMessage.slice(0, 40) : "Nuevo chat",
+      title: body.title || "Nuevo chat",
       createdAt: now,
       messages,
     };
 
-    await Chats.put(chat);
+    db.unshift(chat);
 
     return HttpResponse.json({ chat }, { status: 201 });
   }),
 
   http.post("/api/chats/:id/messages", async ({ params, request }) => {
-    await ensureSeed();
-
-    const chatId = String(params.id);
-    const body = (await request.json()) as { content: string };
-
-    const chat = await Chats.get(chatId);
+    const chat = db.find((c) => c.id === params.id);
 
     if (!chat) {
       return HttpResponse.json({ message: "Not found" }, { status: 404 });
     }
+
+    const body = (await request.json()) as { content: string };
 
     const now = new Date().toISOString();
     const userMsg: Message = {
@@ -88,17 +81,11 @@ export const handlers = [
     };
 
     chat.messages.push(userMsg, assistantMsg);
-    chat.title = body.content.slice(0, 40) || chat.title;
-    chat.createdAt = now;
-
-    await Chats.put(chat);
-
     return HttpResponse.json({ message: assistantMsg, chat });
   }),
 
-  http.delete("/api/chats/:id", async ({ params }) => {
-    await ensureSeed();
-    await Chats.delete(String(params.id));
+  http.delete("/api/chats/:id", ({ params }) => {
+    db = db.filter((c) => c.id !== params.id);
     return HttpResponse.json({ ok: true });
   }),
 ];

@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
+
 import { Edit } from "lucide-react";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -13,16 +15,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useChatHistory } from "@/hooks/use-chat";
 
 const items = [
   {
     title: "Nuevo chat",
-    url: "/new",
+    url: "/chat",
     icon: Edit,
   },
 ];
 
 export function AppSidebar() {
+  const { data: chats } = useChatHistory();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -49,22 +54,24 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Chats</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {chats && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Chats</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {chats.map((chat) => (
+                  <SidebarMenuItem key={chat.id}>
+                    <SidebarMenuButton asChild>
+                      <Link href={`/chat/${chat.id}`}>
+                        <span>{chat.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter />

@@ -1,11 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-const AppContainer = dynamic(() => import("./page-container"), {
-  ssr: false,
-});
+import AppPageContainer from "./page-container";
 
 export default function AppPage() {
-  return <AppContainer />;
+  return <AppPageContainer />;
 }
