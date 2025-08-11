@@ -1,4 +1,4 @@
-export default function NewContainer() {
+export default function NewPageContainer() {
   return (
     <div>
       <h1>New Chat</h1>

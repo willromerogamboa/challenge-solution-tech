@@ -1,4 +1,4 @@
-import NewContainer from "./new-container";
+import NewContainer from "./page-container";
 
 export default function NewPage() {
   return (

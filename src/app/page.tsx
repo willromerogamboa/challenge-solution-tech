@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-const AppContainer = dynamic(() => import("./app-container"), {
+const AppContainer = dynamic(() => import("./page-container"), {
   ssr: false,
 });
 
