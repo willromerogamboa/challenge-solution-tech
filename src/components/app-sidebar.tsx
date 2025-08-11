@@ -1,8 +1,16 @@
 "use client";
 
-import { Edit } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
+import { Edit, MoreHorizontal } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -12,10 +20,11 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useChatHistory } from "@/hooks/use-chat";
+import { useChatHistory, useDeleteChat } from "@/hooks/use-chat";
 
 const items = [
   {
@@ -27,6 +36,14 @@ const items = [
 
 export function AppSidebar() {
   const { data: chats } = useChatHistory();
+  const { mutateAsync: deleteChat } = useDeleteChat();
+
+  const router = useRouter();
+
+  const handleDeleteChat = async (chatId: string) => {
+    await deleteChat(chatId);
+    router.push("/chat");
+  };
 
   return (
     <Sidebar>
@@ -66,6 +83,22 @@ export function AppSidebar() {
                         <span>{chat.title}</span>
                       </Link>
                     </SidebarMenuButton>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <SidebarMenuAction>
+                          <MoreHorizontal />
+                        </SidebarMenuAction>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent side="right" align="start">
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteChat(chat.id)}
+                        >
+                          <span>Delete Project</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>

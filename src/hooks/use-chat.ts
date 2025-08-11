@@ -17,6 +17,7 @@ export function useChat(id: string) {
   return useQuery<Chat>({
     queryKey: qk.chat(id),
     queryFn: () => chatService.get(id),
+    enabled: !!id,
   });
 }
 

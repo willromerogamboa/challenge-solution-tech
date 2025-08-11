@@ -9,10 +9,10 @@ type ChatPageContainerProps = {
 };
 
 export default function ChatPageContainer({ chatId }: ChatPageContainerProps) {
-  const { data } = useChat(chatId);
+  const { data, isLoading } = useChat(chatId);
   const { mutate: sendMessage } = useSendMessage();
 
-  if (!data) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -20,5 +20,7 @@ export default function ChatPageContainer({ chatId }: ChatPageContainerProps) {
     sendMessage({ chatId, content: message });
   };
 
-  return <ChatView chat={data} onSendMessage={handleSendMessage} />;
+  return (
+    <>{data && <ChatView chat={data} onSendMessage={handleSendMessage} />}</>
+  );
 }
