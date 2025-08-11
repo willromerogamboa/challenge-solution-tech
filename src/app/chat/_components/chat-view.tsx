@@ -1,6 +1,15 @@
 import { useRef } from "react";
 
+import { Paperclip, PlusCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Chat } from "@/models/chat.model";
 
@@ -34,8 +43,25 @@ export default function ChatView({ chat, onSendMessage }: ChatViewProps) {
       </div>
 
       <div className="flex w-full items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" type="button" size="icon">
+              <PlusCircle />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="start">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Paperclip />
+                <span>Add photos & files</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Input ref={inputRef} type="text" placeholder="Ask a question..." />
-        <Button onClick={handleSendMessage} type="submit" variant="outline">
+
+        <Button onClick={handleSendMessage} type="button" variant="outline">
           Ask
         </Button>
       </div>
