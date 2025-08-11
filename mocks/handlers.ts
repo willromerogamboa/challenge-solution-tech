@@ -64,19 +64,41 @@ export const handlers = [
       return HttpResponse.json({ message: "Not found" }, { status: 404 });
     }
 
-    const body = (await request.json()) as { content: string };
+    const form = await request.formData();
+    const content = form.get("content") as string;
+    const files = form.getAll("files") as File[];
 
     const now = new Date().toISOString();
     const userMsg: Message = {
       id: nanoid(),
       role: "user",
-      content: body.content,
+      content,
+      files: files.map((file) => {
+        const isImage = file.type.startsWith("image/");
+        const isPdf = file.type === "application/pdf";
+        const isVideo = file.type.startsWith("video/");
+
+        const previewUrl = isImage
+          ? `https://picsum.photos/500/500`
+          : isVideo
+          ? `https://filesamples.com/samples/video/mp4/sample_640x360.mp4`
+          : isPdf
+          ? `https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf`
+          : "";
+
+        return {
+          name: file.name,
+          url: previewUrl,
+          isImage,
+        };
+      }),
       createdAt: now,
     };
+
     const assistantMsg: Message = {
       id: nanoid(),
       role: "assistant",
-      content: generateAssistantReply(body.content),
+      content: generateAssistantReply(content),
       createdAt: new Date().toISOString(),
     };
 

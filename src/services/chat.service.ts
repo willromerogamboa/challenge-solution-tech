@@ -42,12 +42,8 @@ class ChatService {
     formData.append("content", content);
     files?.forEach((file) => formData.append("files", file));
 
-    const headers: Record<string, string> = {
-      "Content-Type": "multipart/form-data",
-    };
-
     return this.httpClient
-      .post<SendResponse>(`/chats/${chatId}/messages`, formData, { headers })
+      .post<SendResponse>(`/chats/${chatId}/messages`, formData)
       .then((res) => res.chat);
   }
 
