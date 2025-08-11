@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Edit } from "lucide-react";
 
 import {
@@ -12,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 
 const items = [
   {

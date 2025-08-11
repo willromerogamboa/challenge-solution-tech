@@ -5,6 +5,12 @@ import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
+if (typeof window !== "undefined") {
+  import("../../mocks/browser").then(({ worker }) => {
+    worker.start({ serviceWorker: { url: "/mockServiceWorker.js" } });
+  });
+}
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
